@@ -6,7 +6,8 @@
 
 using namespace std;
 
-class Clients{
+class Clients
+{
 public:
     int id;
     bool sWait;    //خاص بالبروتوكول
@@ -28,7 +29,8 @@ public:
     Clients();
 };
 
-class Servers{
+class Servers
+{
 public:
     Servers();
     ~Servers();
@@ -39,6 +41,8 @@ public:
 
     void set_mp3(int channel,string data);
     string head;
+    string sByte1;
+    string sByte2;
 
 };
 
