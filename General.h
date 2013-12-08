@@ -83,6 +83,6 @@ extern void sock_recv(int index);
 extern void RecvClients();
 extern void Removefail();
 extern void test_packet(int index);
-
+extern bool get_server(int index);
 
 #endif // GENERAL_H

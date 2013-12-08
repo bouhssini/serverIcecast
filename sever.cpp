@@ -139,6 +139,7 @@ void sock_remove(int index)
 }
 void test_packet(int index)
 {
+    string txt;
     if (clients[index].sCon == false){
         int pos = clients[index].sByte.find("\n\n");
         if (pos != -1)
@@ -146,8 +147,81 @@ void test_packet(int index)
             clients[index].head  = clients[index].sByte.substr(0,pos);
             clients[index].sByte = clients[index].sByte.substr(pos+2);
             clients[index].sCon  = true;
-            string txt = "HTTP/1.0 200 OK\r\n\r\n";
-            send(clients[index].id,txt.c_str(),txt.size(),0);
+
+            if (get_server(index)){
+                txt = "HTTP/1.0 200 OK\r\n\r\n";
+                send(clients[index].id,txt.c_str(),txt.size(),0);
+            }else{
+                txt = "HTTP/1.0 403 Mountpoint in use\r\nContent-Type: text/html\r\n\r\n";
+                send(clients[index].id,txt.c_str(),txt.size(),0);
+            }
         }
     }
+}
+
+bool get_server(int index)
+{
+    Servers sr;
+    Clients cl;
+    bool fnd = false;
+    int cnt = 0;
+
+    for (int i= 0;i < servers.size(); i++)
+    {
+        if (servers[i].head == clients[index].head){
+            if (servers[i].count < 3){
+                clients[index].server = i;
+                fnd = true;
+                if (servers[i].channl1 == -1){
+                    clients[index].channel = 1;
+                    servers[i].channl1 = clients[index].id;
+                }else{
+                    clients[index].channel = 2;
+                    servers[i].channl2 = clients[index].id;
+                }
+                return true;
+            }else{
+                fnd = false;
+                cnt = 3;
+                return false;
+            }
+            break;
+        }
+    }
+    if ( cnt == 0 && fnd == false){
+        sr.channl1 = clients[index].id;
+        sr.head = clients[index].head;
+        servers.push_back(sr);
+    }
+    return true;
+}
+string OpenURL()
+{
+    int sockd;
+
+        struct sockaddr_in serv_name;
+        int status;
+        /* create a socket */
+        sockd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockd == -1)
+        {
+            perror("Socket creation");
+            exit(1);
+        }
+
+        /* server address */
+        serv_name.sin_family = AF_INET;
+        inet_aton("localhost", &serv_name.sin_addr);
+        serv_name.sin_port = htons(8000);
+
+        /* connect to the server */
+        status = connect(sockd, (struct sockaddr*)&serv_name, sizeof(serv_name));
+        if (status == -1)
+        {
+            perror("Connection error");
+            exit(1);
+        }
+
+
+        close(sockd);
 }

@@ -3,6 +3,8 @@
 Clients::Clients()
 {
     id = -1;
+    server = -1;
+    channel = -1;
     skey.clear();
     sWait = false;
     sCon = false;

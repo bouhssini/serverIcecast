@@ -17,6 +17,8 @@ public:
     int sPort;
     int RemotePort;
     int sPacket;
+    int server;
+    int channel;
 
     string mount;
     string head;
@@ -38,9 +40,10 @@ public:
     int count;
     int channl1;
     int channl2;
+    string head;
 
     void set_mp3(int channel,string data);
-    string head;
+
     string sByte1;
     string sByte2;
 
