@@ -198,6 +198,7 @@ bool get_server(int index)
 string OpenURL()
 {
     int sockd;
+    int yes = 1;
 
         struct sockaddr_in serv_name;
         int status;
@@ -214,6 +215,12 @@ string OpenURL()
         inet_aton("localhost", &serv_name.sin_addr);
         serv_name.sin_port = htons(8000);
 
+
+        sock_set_nolinger(sockd);
+        sock_set_nodelay(sockd);
+        sock_set_keepalive(sockd);
+        sock_set_send_buffer(sockd,WIN_SIZE);
+        int rc = sock_set_noblocking(sockd,yes);
         /* connect to the server */
         status = connect(sockd, (struct sockaddr*)&serv_name, sizeof(serv_name));
         if (status == -1)
